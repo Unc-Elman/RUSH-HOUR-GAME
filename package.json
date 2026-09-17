@@ -1,0 +1,37 @@
+{
+  "name": "rush-hour",
+  "version": "1.0.0",
+  "description": "RUSH HOUR — endless runner: outrun the cop, collect coins. Browser, Android & iOS.",
+  "main": "www/index.html",
+  "scripts": {
+    "start": "npx --yes serve www -p 4173",
+    "dev": "npx --yes serve www -p 4173",
+    "build": "node scripts/build.js",
+    "cap:init": "npx cap init \"RUSH HOUR\" com.getawayrush.game --web-dir www",
+    "cap:add:android": "npx cap add android",
+    "cap:add:ios": "npx cap add ios",
+    "cap:sync": "npx cap sync",
+    "cap:android": "npx cap open android",
+    "cap:ios": "npx cap open ios"
+  },
+  "keywords": [
+    "game",
+    "endless-runner",
+    "capacitor",
+    "pwa"
+  ],
+  "author": "RUSH HOUR",
+  "license": "MIT",
+  "devDependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.0"
+  },
+  "dependencies": {
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/haptics": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0",
+    "three": "^0.160.0"
+  }
+}

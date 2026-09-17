@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#4a90c0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="description" content="RUSH HOUR — endless runner. Buy runners, outrun the cop." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>RUSH HOUR</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <canvas id="game" aria-label="RUSH HOUR game canvas"></canvas>
+
+    <div id="overlay" class="overlay">
+      <!-- MAIN MENU -->
+      <div class="panel" id="menu-panel">
+        <div class="logo">
+          <span class="logo-badge">3D ENDLESS RUNNER</span>
+          <h1>RUSH<span>HOUR</span></h1>
+          <p class="tagline">Outrun the cop. Collect coins. Unlock runners.</p>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box">
+            <span class="stat-label">WALLET</span>
+            <span class="stat-value gold" id="menu-wallet">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">BEST</span>
+            <span class="stat-value" id="best-distance">0 m</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">RUNNER</span>
+            <span class="stat-value small" id="menu-runner">Street Runner</span>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-play">PLAY</button>
+        <button type="button" class="btn btn-store" id="btn-store">🛒 PLAYER STORE</button>
+        <button type="button" class="btn btn-ghost" id="btn-how">HOW TO PLAY</button>
+        <p class="hint desktop-only">← → lanes · SPACE jump · ↓ slide · P pause</p>
+        <p class="hint mobile-only">Swipe left/right to change lanes · tap to jump/slide</p>
+        <p class="hint">Progress saves automatically on this device.</p>
+      </div>
+
+      <!-- STORE -->
+      <div class="panel panel-wide hidden" id="store-panel">
+        <div class="store-header">
+          <h2>Player Store</h2>
+          <div class="wallet-chip">💰 <span id="store-wallet">0</span></div>
+        </div>
+        <p class="store-sub">Spend wallet coins earned from runs. Purchases save on this device.</p>
+        <div class="store-grid" id="store-grid"></div>
+        <button type="button" class="btn btn-primary" id="btn-store-back">BACK TO MENU</button>
+      </div>
+
+      <div class="panel hidden" id="how-panel">
+        <h2>How to Play</h2>
+        <ul class="how-list">
+          <li><strong>Run</strong> — auto-sprint through a 3D daylight city.</li>
+          <li><strong>Lanes</strong> — ← → or swipe to dodge.</li>
+          <li><strong>Jump / Slide</strong> — clear crates &amp; low signs.</li>
+          <li><strong>Oncoming cars</strong> — traffic comes at you the other way. Change lanes to dodge. Low cars can be jumped; SUVs and pickups cannot.</li>
+          <li><strong>Coins</strong> — go to your <em>wallet</em> after each run.</li>
+          <li><strong>Store</strong> — buy &amp; equip new runners with bonuses.</li>
+          <li><strong>Progress</strong> — wallet, best distance &amp; unlocks save on this device.</li>
+          <li><strong>Cop</strong> — only catches you if you <em>bump an obstacle or car</em>. Jump crates, slide under signs, dodge oncoming traffic.</li>
+        </ul>
+        <button type="button" class="btn btn-primary" id="btn-how-back">GOT IT</button>
+      </div>
+
+      <div class="panel hidden" id="pause-panel">
+        <h2>Paused</h2>
+        <button type="button" class="btn btn-primary" id="btn-resume">RESUME</button>
+        <button type="button" class="btn btn-ghost" id="btn-quit">QUIT TO MENU</button>
+      </div>
+
+      <div class="panel hidden" id="over-panel">
+        <h2 class="over-title">CAUGHT!</h2>
+        <p class="over-sub" id="over-reason">Bumped an obstacle — the cop caught you.</p>
+        <div class="stats-row">
+          <div class="stat-box">
+            <span class="stat-label">DISTANCE</span>
+            <span class="stat-value" id="over-distance">0 m</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">COINS</span>
+            <span class="stat-value" id="over-coins">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">TO WALLET</span>
+            <span class="stat-value gold" id="over-earned">+0</span>
+          </div>
+        </div>
+        <p class="record hidden" id="new-record">★ NEW RECORD ★</p>
+        <button type="button" class="btn btn-primary" id="btn-retry">RUN AGAIN</button>
+        <button type="button" class="btn btn-store" id="btn-over-store">OPEN STORE</button>
+        <button type="button" class="btn btn-ghost" id="btn-menu">MAIN MENU</button>
+      </div>
+    </div>
+
+    <div id="hud" class="hud hidden">
+      <div class="hud-left">
+        <div class="hud-meter">
+          <span class="hud-label">DISTANCE</span>
+          <span class="hud-value" id="hud-distance">0 m</span>
+        </div>
+        <div class="hud-meter">
+          <span class="hud-label">COINS</span>
+          <span class="hud-value gold" id="hud-coins">0</span>
+        </div>
+      </div>
+      <div class="hud-center">
+        <div class="chase-bar-wrap" title="Gap to the cop">
+          <div class="chase-bar">
+            <div class="chase-fill" id="chase-fill"></div>
+            <span class="chase-icon cop" aria-hidden="true">🚓</span>
+            <span class="chase-icon you" aria-hidden="true">🏃</span>
+          </div>
+          <span class="chase-label">COP GAP</span>
+        </div>
+      </div>
+      <div class="hud-right">
+        <button type="button" class="icon-btn" id="btn-pause" aria-label="Pause">❚❚</button>
+        <button type="button" class="icon-btn" id="btn-mute" aria-label="Mute">🔊</button>
+      </div>
+    </div>
+
+    <div id="touch-zones" class="touch-zones hidden" aria-hidden="true">
+      <div class="zone zone-slide" data-action="slide"><span>SLIDE</span></div>
+      <div class="zone zone-jump" data-action="jump"><span>JUMP</span></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js?v=rush-hour-2"></script>
+</body>
+</html>

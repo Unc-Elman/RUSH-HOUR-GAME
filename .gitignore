@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.android/
+android/
+ios/
+.idea/
+*.iml
+.DS_Store
+*.log
+.cap-build/
+www/build-info.json
+.vscode/
+*.keystore
+*.jks
+local.properties
